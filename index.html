@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>VOLATIX AI | Stock Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+    <div class="shell">
+        <aside class="sidebar">
+            <div class="logo"><span class="logo-mark">✳</span> Volatix<span class="logo-ai">AI</span></div>
+            <div class="nav-label">WORKSPACE</div>
+            <nav id="nav"><button class="nav-item active" data-page="overview">◫ <span>Overview</span></button><button
+                    class="nav-item" data-page="forecast">⌁ <span>Forecasts</span></button><button class="nav-item"
+                    data-page="compare">⇄ <span>Compare stocks</span></button><button class="nav-item"
+                    data-page="portfolio">▣ <span>Virtual portfolio</span></button><button class="nav-item"
+                    data-page="news">▤ <span>News sentiment</span></button><button class="nav-item"
+                    data-page="history">◷ <span>History & backtest</span></button><button class="nav-item"
+                    data-page="reports">⇩ <span>Reports</span></button></nav>
+            <div class="nav-label support">PREFERENCES</div>
+            <nav><button class="nav-item" data-page="settings">⚙ <span>API settings</span></button></nav>
+            <div class="sidebar-bottom">
+                <div class="avatar">V</div>
+                <div><strong>Volatix Workspace</strong><small>Jatin Sharma  26BCY70144  and Praver Pandir 26BCY70392</small></div>
+            </div>
+        </aside>
+        <div class="main-wrap">
+            <header class="topbar"><button id="mobileMenu" class="icon-btn">☰</button>
+                <div class="searchbox">⌕ <input id="search" placeholder="Search stocks..." autocomplete="off"><span>⌘
+                        K</span>
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+                <div class="top-actions"><span id="apiStatus" class="status-pill">● API not configured</span><button
+                        class="icon-btn" id="refreshBtn" title="Refresh">↻</button>
+                    <div class="avatar top-avatar">V</div>
+                </div>
+            </header>
+            <main class="content">
+                <div class="heading">
+                    <div>
+                        <p class="eyebrow">FINANCIAL INTELLIGENCE / <span id="crumb">OVERVIEW</span></p>
+                        <h1 id="pageTitle">Overview <span class="heading-star">✳</span></h1>
+                        <p id="subtitle" class="muted">Your stock market intelligence, all in one place.</p>
+                    </div>
+                    <div class="heading-actions"><span class="date-pill" id="today"></span><button class="btn primary"
+                            id="loadBtn">↻ Fetch market data</button></div>
+                </div>
+                <div id="notice" class="notice">Enter your Alpha Vantage API key in <button id="noticeSettings">API
+                        settings</button> to load real stock data. Demo values are never presented as live.</div>
+                <section id="overview" class="page active">
+                    <div class="section-head">
+                        <h2>Market snapshot</h2><span class="muted">Selected company · Latest available daily
+                            close</span>
+                    </div>
+                    <div class="snapshot-grid">
+                        <div class="card metric">
+                            <div class="metric-label">Selected stock <span>↗</span></div><strong id="stockName">Reliance
+                                Industries</strong>
+                            <div class="big-value" id="lastPrice">—</div>
+                            <div id="dailyChange" class="metric-foot">Waiting for API data</div>
+                        </div>
+                        <div class="card metric">
+                            <div class="metric-label">30-day historical volatility <span>⌁</span></div>
+                            <div class="big-value" id="histVol">—</div>
+                            <div class="metric-foot">Annualized standard deviation</div>
+                        </div>
+                        <div class="card metric">
+                            <div class="metric-label">Next-day volatility forecast <span>◈</span></div>
+                            <div class="big-value" id="forecastValue">—</div>
+                            <div class="metric-foot">EWMA model · daily scale</div>
+                        </div>
+                        <div class="card metric">
+                            <div class="metric-label">Risk classification <span>⚑</span></div>
+                            <div class="big-value" id="riskLevel">—</div>
+                            <div class="metric-foot">Based on forecast daily volatility</div>
+                        </div>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="card chart-card">
+                            <div class="card-heading">
+                                <div><span class="eyebrow">PRICE ACTION</span>
+                                    <h2 id="chartTitle">Historical stock performance</h2>
+                                </div>
+                                <div class="inline-controls"><select id="stockSelect"></select><select id="rangeSelect">
+                                        <option value="30">30D</option>
+                                        <option value="60">60D</option>
+                                        <option value="90">90D</option>
+                                    </select></div>
+                            </div>
+                            <div class="chart-container"><canvas id="priceChart"></canvas></div>
+                            <div class="chart-caption">Historical closing prices · INR when supported by provider · No
+                                fabricated live prices</div>
+                        </div>
+                        <div class="card side-card"><span class="eyebrow">QUICK ANALYTICS</span>
+                            <h2>Volatility monitor</h2>
+                            <div class="risk-meter">
+                                <div class="risk-fill" id="riskFill"></div>
+                            </div>
+                            <div class="risk-legend"><span>Low</span><span>Moderate</span><span>High</span></div>
+                            <div class="separator"></div>
+                            <div class="detail-row"><span>Daily return</span><strong id="dailyReturn">—</strong></div>
+                            <div class="detail-row"><span>20-day realized volatility</span><strong
+                                    id="dailyVol">—</strong></div>
+                            <div class="detail-row"><span>Latest trading session</span><strong
+                                    id="latestDate">—</strong></div>
+                            <div class="detail-row"><span>Data points</span><strong id="pointCount">—</strong></div>
+                            <div class="separator"></div><label for="alertThreshold">Volatility alert threshold
+                                (%)</label>
+                            <div class="input-row"><input type="number" id="alertThreshold" min="0.1" step="0.1"
+                                    value="2.5"><button class="btn" id="saveAlert">Set alert</button></div>
+                            <div id="alertMessage" class="muted small">Alerts are checked while the dashboard is open.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-head spaced">
+                        <h2>Explore intelligence</h2><span class="muted">Tools & analysis</span>
+                    </div>
+                    <div class="feature-grid"><button class="feature-card" data-goto="forecast"><span
+                                class="feature-icon">⌁</span><strong>Volatility forecasts</strong><small>1, 7 and 30-day
+                                horizons</small><span class="feature-arrow">↗</span></button><button
+                            class="feature-card" data-goto="compare"><span class="feature-icon">⇄</span><strong>Stock
+                                comparison</strong><small>Compare two companies</small><span
+                                class="feature-arrow">↗</span></button><button class="feature-card"
+                            data-goto="portfolio"><span class="feature-icon">▣</span><strong>Virtual
+                                portfolio</strong><small>Simulated investment returns</small><span
+                                class="feature-arrow">↗</span></button><button class="feature-card"
+                            data-goto="history"><span
+                                class="feature-icon">◷</span><strong>Backtesting</strong><small>Check past model
+                                accuracy</small><span class="feature-arrow">↗</span></button></div>
+                </section>
+                <section id="forecast" class="page">
+                    <div class="card panel"><span class="eyebrow">STATISTICAL FORECASTS</span>
+                        <h2>Expected future volatility</h2>
+                        <p class="muted">EWMA one-day variance projection; multi-day values scale using a constant daily
+                            variance assumption. These are risk estimates, not price predictions.</p>
+                        <div class="triple" id="forecastCards"></div>
+                        <div class="chart-container short"><canvas id="volChart"></canvas></div>
+                    </div>
+                </section>
+                <section id="compare" class="page">
+                    <div class="card panel">
+                        <h2>Compare two companies</h2>
+                        <p class="muted">Historical volatility and returns, using independently fetched market series.
+                        </p>
+                        <div class="input-row compare-controls"><select
+                                id="compareA"></select><span>versus</span><select id="compareB"></select><button
+                                class="btn primary" id="compareBtn">Compare</button></div>
+                        <div id="comparisonResult" class="comparison-result empty">Choose two stocks and click Compare.
+                        </div>
+                        <div class="chart-container short"><canvas id="compareChart"></canvas></div>
+                    </div>
+                </section>
+                <section id="portfolio" class="page">
+                    <div class="card panel">
+                        <h2>Virtual investment simulator</h2>
+                        <p class="muted">Educational historical simulation. No actual trades, account connection or
+                            real-money investment.</p>
+                        <div class="input-row compare-controls"><select id="portfolioStock"></select><input
+                                id="investment" type="number" min="1" value="10000" placeholder="Amount ₹"><select
+                                id="portfolioDays">
+                                <option value="7">7 sessions</option>
+                                <option value="30">30 sessions</option>
+                                <option value="60">60 sessions</option>
+                            </select><button id="simulateBtn" class="btn primary">Simulate</button></div>
+                        <div id="portfolioResult" class="comparison-result empty">Fetch stock data to simulate a
+                            historical investment.</div>
+                    </div>
+                </section>
+                <section id="news" class="page">
+                    <div class="card panel">
+                        <h2>News sentiment analysis</h2>
+                        <p class="muted">Uses Alpha Vantage NEWS_SENTIMENT where supported by your API subscription.
+                            Provider sentiment scores are informational and do not guarantee market direction.</p>
+                        <button class="btn primary" id="newsBtn">Fetch news sentiment</button>
+                        <div id="newsResult" class="news-list">No news loaded yet.</div>
+                    </div>
+                </section>
+                <section id="history" class="page">
+                    <div class="card panel">
+                        <h2>Historical market analysis & backtest</h2>
+                        <p class="muted">Walk-forward EWMA forecasts compared with next-session absolute returns.
+                            Absolute return is a noisy proxy, not observed latent volatility.</p>
+                        <div class="triple" id="backtestStats"></div>
+                        <div class="chart-container"><canvas id="backtestChart"></canvas></div>
+                        <p class="muted small">Use the stock selector in Overview to change the company. History is
+                            limited by the API response and available trading sessions.</p>
+                    </div>
+                </section>
+                <section id="reports" class="page">
+                    <div class="card panel">
+                        <h2>Analysis reports</h2>
+                        <p class="muted">Download your current stock analysis as a formatted PDF via your browser's
+                            Print / Save as PDF. No CSV file is used or generated.</p><button class="btn primary"
+                            id="printBtn">Print / Save as PDF</button>
+                        <div id="reportPreview" class="report-preview"></div>
+                    </div>
+                </section>
+                <section id="settings" class="page">
+                    <div class="card panel settings-panel">
+                        <h2>Alpha Vantage API configuration</h2>
+                        <p class="muted">Paste your API key. It is kept only in this browser tab's memory, not uploaded
+                            to us or stored in a file. However, browser requests expose it to browser developer tools
+                            and the API provider. For production security use a backend proxy.</p><label
+                            for="apiKey">API key</label>
+                        <div class="input-row"><input type="password" id="apiKey"
+                                placeholder="Paste your Alpha Vantage API key"><button class="btn primary"
+                                id="saveKey">Use key</button></div>
+                        <p class="muted small">API source: <a href="https://www.alphavantage.co/support/#api-key"
+                                target="_blank" rel="noopener noreferrer">Get a free API key</a>. Indian exchange
+                            symbols and endpoint access depend on provider support and plan. The free plan may have
+                            strict request limits.</p>
+                        <div class="separator"></div>
+                        <h3>Data source notes</h3>
+                        <p class="muted">TIME_SERIES_DAILY with compact output provides up to 100 recent daily
+                            observations. Adjusted prices and longer histories may require a different endpoint or plan.
+                            This project uses unadjusted daily close; corporate actions can affect comparisons.</p>
+                    </div>
+                </section>
+                <footer>VOLATIX AI <span>·</span> Educational analytics only — not financial advice <span>·</span> Built
+                    with HTML, CSS & JavaScript</footer>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>
